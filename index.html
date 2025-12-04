@@ -342,49 +342,80 @@
         }
 
         /* ==========================================
-           ABOUT SECTION WITH PHOTO
+           ABOUT SECTION WITH PHOTO (UPDATED)
         ========================================== */
         .about-content {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            /* Grid changed: Given the image column (left) more width (2fr vs 3fr) */
+            grid-template-columns: 2fr 3fr;
             gap: 50px;
-            align-items: center;
+            align-items: center; /* Keeps content centered vertically */
             margin-bottom: 50px;
         }
-
+        
+        /* New container to hold the layered effects */
         .profile-photo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
+            width: 100%;
+            height: 550px; /* Fixed height for a tall portrait look */
+            z-index: 1;
         }
-
+        
+        /* The main photo shape */
         .profile-photo {
-            width: 300px;
-            height: 300px;
-            border-radius: 20px;
-            border: 3px solid var(--neon-blue);
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.4);
+            width: 100%;
+            height: 100%;
+            /* We remove the old standard border and radius */
+            border: none;
+            border-radius: 0;
+            /* CLIP-PATH creates the futuristic angled corners shape */
+            clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
+            /* drop-shadow filter is used because standard box-shadow doesn't follow clip-path shapes */
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4));
             object-fit: cover;
             transition: all 0.4s ease;
             background: rgba(13, 27, 42, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray);
-            font-size: 1.2rem;
+            position: relative;
         }
-
-        .profile-photo:hover {
-            transform: scale(1.05);
-            box-shadow: 0 25px 70px rgba(0, 212, 255, 0.6);
+        
+        /* The "Glitch Border" Effect behind the photo */
+        .profile-photo::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--neon-blue), transparent 40%, var(--blue-bright));
+            /* Same shape as the main photo, but slightly offset */
+            clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
+            opacity: 0.6;
+            transition: all 0.4s ease;
         }
-
-        /* If image is added */
+        
+        /* Hover effects for the container */
+        .profile-photo-container:hover .profile-photo {
+            /* Slight lift and shift effect */
+            transform: translate(-5px, -5px);
+            filter: drop-shadow(0 10px 30px rgba(0, 212, 255, 0.7));
+        }
+        
+        /* Hover effect for the background border */
+        .profile-photo-container:hover .profile-photo::before {
+            opacity: 1;
+            top: 5px;
+            left: 5px;
+            /* Different gradient on hover */
+            background: linear-gradient(225deg, var(--neon-glow), transparent 40%, var(--neon-blue));
+        }
+        
+        /* Ensure the image fits perfectly inside the new shape */
         .profile-photo img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            border-radius: 17px;
+            object-fit: cover; /* Crucial: ensures the photo covers the whole tall area without stretching */
+            border-radius: 0; /* Remove old radius */
         }
 
         .about-text {
@@ -763,9 +794,11 @@
                 gap: 20px;
             }
 
-            .profile-photo {
-                width: 250px;
-                height: 250px;
+            .profile-photo-container {
+                height: auto;
+                max-width: 400px; /* Limit width on tablet */
+                aspect-ratio: 3 / 4; /* Maintain a portrait ratio */
+                margin: 0 auto; /* Center it */
             }
         }
 
@@ -1231,6 +1264,7 @@
     </script>
 </body>
 </html>
+
 
 
 
